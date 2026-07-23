@@ -1,22 +1,26 @@
-const routables = [
-  {
-    endpoint: "/",
-    cname: "https://caelondev.github.io/caelondev",
-    match(pathname) {
-      return pathname === "/" || pathname.startsWith("/caelondev");
-    },
-    resolve(pathname) {
-      const stripped =
-        pathname === "/" ? "" : pathname.replace(/^\/caelondev/, "");
-      return this.cname + stripped;
-    },
+const routables = new Map();
+
+function register(routable) {
+  routables.set(routable.endpoint, routable);
+}
+
+register({
+  endpoint: "/",
+  cname: "https://caelondev.github.io/caelondev",
+  match(pathname) {
+    return pathname === "/" || pathname.startsWith("/caelondev");
   },
-];
+  resolve(pathname) {
+    const stripped =
+      pathname === "/" ? "" : pathname.replace(/^\/caelondev/, "");
+    return this.cname + stripped;
+  },
+});
 
 export default async function handler(req, res) {
   const pathname = req.url.split("?")[0];
 
-  for (const routable of routables) {
+  for (const routable of routables.values()) {
     if (routable.match(pathname)) {
       const url = routable.resolve(pathname);
 
