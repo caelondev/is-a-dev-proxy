@@ -1,3 +1,5 @@
+import { Readable } from "node:stream";
+
 const routables = new Map();
 
 function register(routable) {
@@ -28,14 +30,19 @@ export default async function handler(req, res) {
       delete headers["accept-encoding"];
 
       const upstream = await fetch(url, { headers });
-      const body = await upstream.arrayBuffer();
 
       upstream.headers.forEach((value, key) => {
         if (key === "content-encoding") return;
         res.setHeader(key, value);
       });
+      res.status(upstream.status);
 
-      res.status(upstream.status).send(Buffer.from(body));
+      if (!upstream.body) {
+        res.end();
+        return;
+      }
+
+      Readable.fromWeb(upstream.body).pipe(res);
       return;
     }
   }
