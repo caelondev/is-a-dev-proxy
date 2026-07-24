@@ -1,2 +1,3 @@
 # router-proxy
-a serverless vecel function proxy for my is-a.dev subdomain
+
+a serverless vercel serverless function proxy for my domains

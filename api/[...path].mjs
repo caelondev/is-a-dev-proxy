@@ -139,3 +139,4 @@ export default async function handler(req, res) {
   }
 
   Readable.fromWeb(upstream.body).pipe(res);
+}
