@@ -10,6 +10,7 @@ register({
   name: "portfolio",
   subdomain: null,
   upstream: "https://caelondev.github.io/caelondev",
+  proxy: true,
   rewritePath: (pathname) =>
     pathname === "/" ? "/" : pathname.replace(/^\/caelondev/, ""),
 });
@@ -17,9 +18,11 @@ register({
 register({
   name: "git",
   subdomain: "git",
-  upstream: "https://codeberg.org/caelondev",
+  upstream: "https://codeberg.org",
   upstreamHost: "codeberg.org",
-  rewritePath: (pathname) => pathname,
+  proxy: true,
+  rewritePath: (pathname) =>
+    pathname === "/" ? "/caelondev" : pathname,
 });
 
 const IS_A_DEV_SUFFIX = "is-a.dev";
@@ -101,7 +104,15 @@ export default async function handler(req, res) {
   }
 
   const rewritten = route.rewritePath(pathname);
-  const targetUrl = route.upstream + rewritten + (query ? `?${query}` : "");
+  const query_ = query ? `?${query}` : "";
+
+  if (!route.proxy) {
+    res.writeHead(308, { Location: route.upstream + rewritten + query_ });
+    res.end();
+    return;
+  }
+
+  const targetUrl = route.upstream + rewritten + query_;
   const hasBody = !["GET", "HEAD"].includes(req.method);
   const headers = buildHeaders(req, route);
 
@@ -128,4 +139,3 @@ export default async function handler(req, res) {
   }
 
   Readable.fromWeb(upstream.body).pipe(res);
-}
