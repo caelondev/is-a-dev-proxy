@@ -1,51 +1,131 @@
 import { Readable } from "node:stream";
 
-const routables = new Map();
+const bySubdomain = new Map();
 
-function register(routable) {
-  routables.set(routable.endpoint, routable);
+function register(route) {
+  bySubdomain.set(route.subdomain, route);
 }
 
 register({
-  endpoint: "/",
-  cname: "https://caelondev.github.io/caelondev",
-  match(pathname) {
-    return pathname === "/" || pathname.startsWith("/caelondev");
-  },
-  resolve(pathname) {
-    const stripped =
-      pathname === "/" ? "" : pathname.replace(/^\/caelondev/, "");
-    return this.cname + stripped;
-  },
+  name: "portfolio",
+  subdomain: null,
+  upstream: "https://caelondev.github.io/caelondev",
+  rewritePath: (pathname) =>
+    pathname === "/" ? "/" : pathname.replace(/^\/caelondev/, ""),
 });
 
-export default async function handler(req, res) {
-  const pathname = req.url.split("?")[0];
+register({
+  name: "git",
+  subdomain: "git",
+  upstream: "https://codeberg.org/caelondev",
+  upstreamHost: "codeberg.org",
+  rewritePath: (pathname) => pathname,
+});
 
-  for (const routable of routables.values()) {
-    if (routable.match(pathname)) {
-      const url = routable.resolve(pathname);
+const IS_A_DEV_SUFFIX = "is-a.dev";
 
-      const headers = { ...req.headers };
-      delete headers["accept-encoding"];
+function isDeadHost(host) {
+  return host === IS_A_DEV_SUFFIX || host.endsWith("." + IS_A_DEV_SUFFIX);
+}
 
-      const upstream = await fetch(url, { headers });
+function extractSubdomain(host) {
+  const parts = host.split(".");
+  if (parts.length <= 2) return null;
+  return parts[0];
+}
 
-      upstream.headers.forEach((value, key) => {
-        if (key === "content-encoding") return;
-        res.setHeader(key, value);
-      });
-      res.status(upstream.status);
+function listActiveSubdomains() {
+  const names = [];
+  for (const sub of bySubdomain.keys()) {
+    names.push(sub === null ? "caelondev.net" : `${sub}.caelondev.net`);
+  }
+  return names;
+}
 
-      if (!upstream.body) {
-        res.end();
-        return;
+function buildHeaders(req, route) {
+  const headers = new Headers();
+  for (const [key, value] of Object.entries(req.headers)) {
+    if (value === undefined) continue;
+    headers.set(key, Array.isArray(value) ? value.join(", ") : value);
+  }
+  headers.delete("accept-encoding");
+  headers.delete("content-length");
+  headers.delete("host");
+  if (route.upstreamHost) headers.set("host", route.upstreamHost);
+  return headers;
+}
+
+function copyResponseHeaders(res, upstream) {
+  upstream.headers.forEach((value, key) => {
+    if (
+      ["content-encoding", "content-length", "transfer-encoding"].includes(key)
+    )
+      return;
+
+    if (key === "location") {
+      try {
+        const loc = new URL(value);
+        res.setHeader("location", loc.pathname + loc.search);
+      } catch {
+        res.setHeader("location", value);
       }
-
-      Readable.fromWeb(upstream.body).pipe(res);
       return;
     }
+
+    res.setHeader(key, value);
+  });
+}
+
+export default async function handler(req, res) {
+  const host = req.headers.host;
+  const [pathname, query = ""] = req.url.split("?");
+
+  if (isDeadHost(host)) {
+    const fullUrl = `https://${host}${pathname}${query ? `?${query}` : ""}`;
+    res.status(410);
+    res.setHeader("content-type", "text/plain; charset=utf-8");
+    res.send(
+      `${fullUrl} is currently unsupported\n\nActive subdomains:\n${listActiveSubdomains()
+        .map((s) => `- ${s}`)
+        .join("\n")}`,
+    );
+    return;
   }
 
-  res.status(404).send("Not found");
+  const subdomain = extractSubdomain(host);
+  const route = bySubdomain.get(subdomain);
+
+  if (!route) {
+    res.status(404).send("Not found");
+    return;
+  }
+
+  const rewritten = route.rewritePath(pathname);
+  const targetUrl = route.upstream + rewritten + (query ? `?${query}` : "");
+  const hasBody = !["GET", "HEAD"].includes(req.method);
+  const headers = buildHeaders(req, route);
+
+  let upstream;
+  try {
+    upstream = await fetch(targetUrl, {
+      method: req.method,
+      headers,
+      body: hasBody ? Readable.toWeb(req) : undefined,
+      duplex: hasBody ? "half" : undefined,
+      redirect: "manual",
+    });
+  } catch (err) {
+    res.status(502).send(`Upstream fetch failed: ${err.message}`);
+    return;
+  }
+
+  copyResponseHeaders(res, upstream);
+  res.status(upstream.status);
+
+  if (!upstream.body) {
+    res.end();
+    return;
+  }
+
+  Readable.fromWeb(upstream.body).pipe(res);
 }
