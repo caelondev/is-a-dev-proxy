@@ -50,7 +50,7 @@ function codebergPage({ name, subdomain, repoPath = null }) {
     proxy: true,
     rewritePath: (pathname) => {
       if (pathname === "/") return `${base}/`;
-      if (pathname.startsWith(base + "/")) return pathname; 
+      if (pathname.startsWith(base + "/")) return pathname;
       return `${base}${pathname}`;
     },
   };
@@ -107,6 +107,36 @@ function copyResponseHeaders(res, upstream) {
 export default async function handler(req, res) {
   const host = req.headers.host;
   const [pathname, query = ""] = req.url.split("?");
+
+  const searchParams = new URLSearchParams(query);
+  if (searchParams.has("__debug")) {
+    const subdomain = extractSubdomain(host);
+    const route = bySubdomain.get(subdomain);
+    const rewritten = route ? route.rewritePath(pathname) : "N/A";
+    const targetUrl = route
+      ? route.upstream + rewritten + (query ? `?${query}` : "")
+      : "N/A";
+
+    res.status(200);
+    res.setHeader("content-type", "text/plain; charset=utf-8");
+    res.send(
+      [
+        `=== DEBUG ===`,
+        `host: ${host}`,
+        `subdomain: ${subdomain}`,
+        `route found: ${route ? "yes" : "no"}`,
+        route ? `route name: ${route.name}` : "",
+        `pathname: ${pathname}`,
+        `query: ${query || "(empty)"}`,
+        `rewritten path: ${rewritten}`,
+        `target url: ${targetUrl}`,
+        `upstream: ${route ? route.upstream : "N/A"}`,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    );
+    return;
+  }
 
   if (isDeadHost(host)) {
     const fullUrl = `https://${host}${pathname}${query ? `?${query}` : ""}`;
