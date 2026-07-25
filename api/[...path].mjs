@@ -9,7 +9,7 @@ function register(route) {
 register({
   name: "portfolio",
   subdomain: null,
-  upstream: "https://caelondev.github.io/caelondev",
+  upstream: "https://caelondev.codeberg.page/",
   proxy: true,
   rewritePath: (pathname) =>
     pathname === "/" ? "/" : pathname.replace(/^\/caelondev/, ""),
