@@ -21,14 +21,39 @@ register({
   upstream: "https://codeberg.org",
   upstreamHost: "codeberg.org",
   proxy: true,
-  rewritePath: (pathname) =>
-    pathname === "/" ? "/caelondev" : pathname,
+  rewritePath: (pathname) => (pathname === "/" ? "/caelondev" : pathname),
 });
+
+register(
+  codebergPage({
+    name: "blog",
+    subdomain: "blog",
+    repoPath: "blog",
+  }),
+);
 
 const IS_A_DEV_SUFFIX = "is-a.dev";
 
 function isDeadHost(host) {
   return host === IS_A_DEV_SUFFIX || host.endsWith("." + IS_A_DEV_SUFFIX);
+}
+
+function codebergPage({ name, subdomain, repoPath = null }) {
+  const upstreamHost = "caelondev.codeberg.page";
+  const base = repoPath ? `/${repoPath}` : "";
+
+  return {
+    name,
+    subdomain,
+    upstream: `https://${upstreamHost}`,
+    upstreamHost,
+    proxy: true,
+    rewritePath: (pathname) => {
+      if (pathname === "/") return `${base}/`;
+      if (pathname.startsWith(base + "/")) return pathname; 
+      return `${base}${pathname}`;
+    },
+  };
 }
 
 function extractSubdomain(host) {
