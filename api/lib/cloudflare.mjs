@@ -7,7 +7,13 @@ function getClientIP(req) {
   );
 }
 
+function isIPv6(ip) {
+  return ip.includes(":");
+}
+
 async function banIPCloudflare(ip) {
+  const target = isIPv6(ip) ? "ip6" : "ip";
+
   const res = await fetch(
     `https://api.cloudflare.com/client/v4/zones/${process.env.CF_ZONE_ID}/firewall/access_rules/rules`,
     {
@@ -18,7 +24,7 @@ async function banIPCloudflare(ip) {
       },
       body: JSON.stringify({
         mode: "block",
-        configuration: { target: "ip", value: ip },
+        configuration: { target, value: ip },
         notes: `honeypot trigger /__clankers @ ${new Date().toISOString()}`,
       }),
     },
