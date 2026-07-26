@@ -31,19 +31,14 @@
         font-family: var(--font-mono);
       }
 
-      .container {
+      .header {
         max-width: 720px;
         margin: 0 auto;
-        padding: 2rem 1.5rem 4rem;
-      }
-
-      .header {
+        padding: 1.5rem 1.5rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding-bottom: 1.5rem;
         border-bottom: 1px solid var(--border);
-        margin-bottom: 2rem;
       }
 
       .logo {
@@ -64,28 +59,16 @@
         flex-shrink: 0;
       }
 
+      .container {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+      }
+
       .tag {
         font-size: 0.85rem;
         color: var(--muted);
         margin-bottom: 0.5rem;
-      }
-
-      .link-wrap {
-        position: relative;
-        display: inline-grid;
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr;
-      }
-      .bait-link {
-        grid-area: 1 / 1;
-      }
-      .click-shield {
-        grid-area: 1 / 1;
-        z-index: 2;
-        cursor: default;
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
-        background: transparent;
       }
 
       h1 {
@@ -115,6 +98,41 @@
         color: var(--primary);
       }
 
+      .link-wrap {
+        position: relative;
+        display: inline-grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+      }
+      .bait-link {
+        grid-area: 1 / 1;
+        color: var(--primary);
+        text-decoration: underline;
+        font-weight: 700;
+      }
+      .bait-link:hover {
+        color: var(--fg-muted);
+      }
+      .click-shield {
+        grid-area: 1 / 1;
+        z-index: 2;
+        cursor: default;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        background: transparent;
+      }
+
+      p a {
+        color: var(--primary);
+        text-decoration: underline;
+        text-decoration-color: var(--muted);
+        text-underline-offset: 2px;
+      }
+      p a:hover {
+        color: var(--fg-muted);
+        text-decoration-color: var(--fg-muted);
+      }
+
       .divider {
         border: none;
         border-top: 1px solid var(--border);
@@ -136,40 +154,6 @@
         margin-right: 0.5em;
       }
 
-      .link-wrap {
-        position: relative;
-        display: inline-block;
-      }
-      .bait-link {
-        color: var(--primary);
-        text-decoration: underline;
-        font-weight: 700;
-      }
-      p a {
-        color: var(--primary);
-        text-decoration: underline;
-        text-decoration-color: var(--muted);
-        text-underline-offset: 2px;
-      }
-      p a:hover {
-        color: var(--fg-muted);
-        text-decoration-color: var(--fg-muted);
-      }
-      .bait-link:hover {
-        color: var(--fg-muted);
-      }
-      /* sits directly on top of the link. a real click/tap hits this
-         invisible layer and is swallowed (onclick returns false). a
-         bot reading raw HTML/href attributes never renders CSS layout
-         or z-index, so it follows the real <a href> underneath regardless. */
-      .click-shield {
-        position: absolute;
-        inset: 0;
-        z-index: 2;
-        cursor: default;
-        background: transparent;
-      }
-
       .footnote {
         font-size: 0.85rem;
         color: var(--muted);
@@ -188,8 +172,14 @@
 
       <p>
         This page is a honeypot, built specifically to catch bad bots and
-        automated crawlers that ignore <a href="/robots.txt">robots.txt</a> and
-        go digging where they were explicitly told not to.
+        automated crawlers that ignore
+        <a
+          href="https://caelondev.net/robots.txt"
+          target="_blank"
+          rel="noopener noreferrer"
+          >robots.txt</a
+        >
+        and go digging where they were explicitly told not to.
       </p>
 
       <p class="muted">
