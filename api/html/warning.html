@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clanker Honeypot</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Space+Mono:wght@400;700&display=swap");
+
+      :root {
+        --bg: #0d0806;
+        --fg: #f0e4d8;
+        --fg-muted: #a8836f;
+        --primary: #e8743f;
+        --muted: #8a6a58;
+        --border: #2c1f15;
+        --font-display: "Fraunces", serif;
+        --font-mono: "Space Mono", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--font-mono);
+      }
+
+      .container {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 2rem;
+      }
+
+      .logo {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 1.8rem;
+        color: var(--fg);
+        text-decoration: none;
+        line-height: 1;
+      }
+      .logo span {
+        color: var(--primary);
+      }
+
+      .icon {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+      }
+
+      .tag {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+      }
+
+      h1 {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 2rem;
+        line-height: 1.2;
+        margin: 0 0 1.5rem;
+        color: var(--fg);
+      }
+
+      p {
+        font-size: 1rem;
+        line-height: 1.75;
+        color: var(--fg);
+        margin: 0 0 1.25rem;
+      }
+      p.muted {
+        color: var(--fg-muted);
+      }
+      p strong {
+        color: var(--fg);
+        font-weight: 700;
+      }
+      code {
+        font-family: var(--font-mono);
+        color: var(--primary);
+      }
+
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 2rem 0;
+      }
+
+      .quote {
+        border-left: 2px solid var(--primary);
+        padding-left: 1rem;
+        margin: 1.75rem 0;
+        color: var(--fg-muted);
+      }
+
+      .link-line {
+        margin: 0.25rem 0;
+      }
+      .link-line .arrow {
+        color: var(--primary);
+        margin-right: 0.5em;
+      }
+
+      .link-wrap {
+        position: relative;
+        display: inline-block;
+      }
+      .bait-link {
+        color: var(--primary);
+        text-decoration: underline;
+        font-weight: 700;
+      }
+      p a {
+        color: var(--primary);
+        text-decoration: underline;
+        text-decoration-color: var(--muted);
+        text-underline-offset: 2px;
+      }
+      p a:hover {
+        color: var(--fg-muted);
+        text-decoration-color: var(--fg-muted);
+      }
+      .bait-link:hover {
+        color: var(--fg-muted);
+      }
+      /* sits directly on top of the link. a real click/tap hits this
+         invisible layer and is swallowed (onclick returns false). a
+         bot reading raw HTML/href attributes never renders CSS layout
+         or z-index, so it follows the real <a href> underneath regardless. */
+      .click-shield {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        cursor: default;
+        background: transparent;
+      }
+
+      .footnote {
+        font-size: 0.85rem;
+        color: var(--muted);
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <a href="https://caelondev.net" class="logo"><span>caelondev</span></a>
+      </div>
+
+      <div class="tag">robots.txt / disallow</div>
+      <h1>Clanker Honeypot</h1>
+
+      <p>
+        This page is a honeypot, built specifically to catch bad bots and
+        automated crawlers that ignore <a href="/robots.txt">robots.txt</a> and
+        go digging where they were explicitly told not to.
+      </p>
+
+      <p class="muted">
+        If you are a <strong>human being</strong>, nothing has happened yet and
+        you are not in any trouble, but please read carefully:
+        <strong>do not click the link below</strong>. It is not a mistake, it is
+        not broken, and it does not lead anywhere useful for a person. Clicking
+        it will get your IP address banned from all of my website
+        (*.caelondev.net), immediately and without a warning screen after this
+        one.
+      </p>
+
+      <hr class="divider" />
+
+      <p class="link-line">
+        <span class="arrow">&gt;</span>
+        <span class="link-wrap">
+          <a class="bait-link" href="{{TRIGGER_PATH}}">{{TRIGGER_PATH}}</a>
+          <div
+            class="click-shield"
+            onclick="return false;"
+            aria-hidden="true"
+          ></div>
+        </span>
+      </p>
+
+      <p class="footnote">
+        this page is static. it does not know what you are yet &mdash; the link
+        above is what decides that.
+      </p>
+    </div>
+  </body>
+</html>

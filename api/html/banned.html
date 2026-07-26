@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>banned</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Space+Mono:wght@400;700&display=swap");
+
+      :root {
+        --bg: #0d0806;
+        --fg: #f0e4d8;
+        --fg-muted: #a8836f;
+        --primary: #e8743f;
+        --muted: #8a6a58;
+        --border: #2c1f15;
+        --font-display: "Fraunces", serif;
+        --font-mono: "Space Mono", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--font-mono);
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .container {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 3rem 1.5rem;
+      }
+
+      h1 {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 2.2rem;
+        line-height: 1.2;
+        margin: 0 0 1.5rem;
+        color: var(--primary);
+        animation: pulse 1.6s ease-in-out infinite;
+      }
+
+      .tag {
+        font-size: 0.85rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+        letter-spacing: 0.05em;
+      }
+
+      .scream {
+        font-weight: 700;
+        color: var(--fg);
+        border-left: 2px solid var(--primary);
+        padding-left: 1rem;
+        margin: 0 0 1.75rem;
+      }
+      .scream .line {
+        display: block;
+      }
+      .scream .line + .line {
+        margin-top: 0.4rem;
+      }
+
+      p {
+        font-size: 1rem;
+        line-height: 1.75;
+        color: var(--fg-muted);
+        margin: 0 0 1.25rem;
+      }
+      p strong {
+        color: var(--fg);
+        font-weight: 700;
+      }
+
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 2rem 0;
+      }
+
+      .ip-line {
+        margin: 0.25rem 0 1.75rem;
+        font-size: 1rem;
+      }
+      .ip-line .arrow {
+        color: var(--primary);
+        margin-right: 0.5em;
+      }
+      .ip-line .v {
+        color: var(--primary);
+        font-weight: 700;
+      }
+
+      .contact {
+        margin-top: 1.75rem;
+        color: var(--fg-muted);
+      }
+      .contact a {
+        color: var(--primary);
+        text-decoration: underline;
+        font-weight: 700;
+      }
+      .contact a:hover {
+        color: var(--fg-muted);
+      }
+
+      .footnote {
+        margin-top: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--muted);
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="tag">access denied</div>
+      <h1>bad clankers not allowed.</h1>
+
+      <div class="scream">
+        <span class="line">⚠ IF YOU ARE HUMAN: DO NOT REFRESH THIS PAGE.</span>
+        <span class="line"
+          >this is a one-time-only page &mdash; take a screenshot before
+          refreshing.</span
+        >
+      </div>
+
+      <p>
+        Your IP has been banned from this site for ignoring
+        <strong>robots.txt</strong> and triggering the honeypot anyway. If
+        you're reading this as an actual person, something on your end followed
+        a link it shouldn't have &mdash; a browser extension, a "preview"
+        feature, a crawler bundled into an app, or something scanning pages on
+        your behalf without you asking it to.
+      </p>
+
+      <hr class="divider" />
+
+      <p class="ip-line">
+        <span class="arrow">&gt;</span> banned ip: <span class="v">{{IP}}</span>
+      </p>
+
+      <p class="contact">
+        If you're a <strong>curious human</strong> who got caught by accident,
+        DM me your IP on Discord to get unbanned:
+        <br />
+        <a href="{{DISCORD_URL}}" target="_blank" rel="noopener noreferrer"
+          >{{DISCORD_URL}}</a
+        >
+      </p>
+    </div>
+  </body>
+</html>
