@@ -70,6 +70,24 @@
         margin-bottom: 0.5rem;
       }
 
+      .link-wrap {
+        position: relative;
+        display: inline-grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+      }
+      .bait-link {
+        grid-area: 1 / 1;
+      }
+      .click-shield {
+        grid-area: 1 / 1;
+        z-index: 2;
+        cursor: default;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        background: transparent;
+      }
+
       h1 {
         font-family: var(--font-display);
         font-weight: 700;
@@ -160,11 +178,11 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
-        <a href="https://caelondev.net" class="logo"><span>caelondev</span></a>
-      </div>
+    <div class="header">
+      <a href="https://caelondev.net" class="logo"><span>caelondev</span></a>
+    </div>
 
+    <div class="container">
       <div class="tag">robots.txt / disallow</div>
       <h1>Clanker Honeypot</h1>
 
@@ -189,7 +207,9 @@
       <p class="link-line">
         <span class="arrow">&gt;</span>
         <span class="link-wrap">
-          <a class="bait-link" href="{{TRIGGER_PATH}}">{{TRIGGER_PATH}}</a>
+          <a class="bait-link" href="{{TRIGGER_PATH}}"
+            >{{TRIGGER_PATH}} (DO NOT CLICK IF YOU'RE A HUMAN!!)</a
+          >
           <div
             class="click-shield"
             onclick="return false;"
