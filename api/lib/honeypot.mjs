@@ -17,6 +17,7 @@ const bannedTemplate = readFileSync(
 
 const ENTRY_PATH = "/__clankers";
 const TRIGGER_PATH = "/articles.md";
+const BLOG_POST_LINK = "https://blog.caelondev.net/posts/screw-you-naughty-nut-munchers";
 
 function normalize(pathname) {
   return pathname.endsWith("/") && pathname.length > 1
@@ -33,7 +34,7 @@ function isTriggerPath(pathname) {
 }
 
 function buildWarningPage() {
-  return warningTemplate.replaceAll("{{TRIGGER_PATH}}", TRIGGER_PATH);
+  return warningTemplate.replaceAll("{{TRIGGER_PATH}}", TRIGGER_PATH).replaceAll("{{BLOG-POST-LINK}}", BLOG_POST_LINK);
 }
 
 function buildBannedPage(ip) {

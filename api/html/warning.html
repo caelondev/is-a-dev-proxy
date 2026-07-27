@@ -103,14 +103,15 @@
         display: inline-grid;
         grid-template-columns: 1fr;
         grid-template-rows: 1fr;
+        margin-bottom: 15px;
       }
-      .bait-link {
+      .link {
         grid-area: 1 / 1;
         color: var(--primary);
         text-decoration: underline;
         font-weight: 700;
       }
-      .bait-link:hover {
+      .link:hover {
         color: var(--fg-muted);
       }
       .click-shield {
@@ -197,15 +198,19 @@
       <p class="link-line">
         <span class="arrow">&gt;</span>
         <span class="link-wrap">
-          <a class="bait-link" href="{{TRIGGER_PATH}}"
-            >{{TRIGGER_PATH}} (DO NOT CLICK IF YOU'RE A HUMAN!!)</a
-          >
+          <a class="bait-link link" href="{{TRIGGER_PATH}}">
+            {{TRIGGER_PATH}} (DO NOT CLICK IF YOU'RE A HUMAN!!)
+          </a>
           <div
             class="click-shield"
             onclick="return false;"
             aria-hidden="true"
           ></div>
         </span>
+        <a class="link" href="{{BLOG-POST-LINK}}">
+          <span class="arrow">&gt;</span>
+          the blog about how i made this honeypot (THIS LINK IS SAFE TO CLICK)
+        </a>
       </p>
     </div>
   </body>
