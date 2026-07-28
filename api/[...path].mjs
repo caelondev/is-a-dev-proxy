@@ -1,6 +1,6 @@
 import { Readable } from "node:stream";
 import { getRoute } from "./lib/routes.mjs";
-import { buildHeaders, copyResponseHeaders } from "./lib/proxy-headers.mjs";
+import { buildHeaders, copyResponseHeaders, isCaelondevOrigin } from "./lib/proxy-headers.mjs";
 import { buildRobotsTxt } from "./lib/robots.mjs";
 import { getClientIP, banIPCloudflare } from "./lib/cloudflare.mjs";
 import {
@@ -100,6 +100,13 @@ export default async function handler(req, res) {
   }
 
   copyResponseHeaders(res, upstream);
+
+  const origin = req.headers.origin;
+  if (isCaelondevOrigin(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+  }
+
   res.status(upstream.status);
 
   if (!upstream.body) {

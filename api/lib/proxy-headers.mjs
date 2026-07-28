@@ -32,4 +32,15 @@ function copyResponseHeaders(res, upstream) {
   });
 }
 
-export { buildHeaders, copyResponseHeaders };
+function isCaelondevOrigin(origin) {
+  if (!origin) return false;
+
+  try {
+    const { hostname } = new URL(origin);
+    return hostname === "caelondev.net" || hostname.endsWith(".caelondev.net");
+  } catch {
+    return false;
+  }
+}
+
+export { buildHeaders, copyResponseHeaders, isCaelondevOrigin };
