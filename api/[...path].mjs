@@ -1,6 +1,10 @@
 import { Readable } from "node:stream";
 import { getRoute } from "./lib/routes.mjs";
-import { buildHeaders, copyResponseHeaders, isCaelondevOrigin } from "./lib/proxy-headers.mjs";
+import {
+  buildHeaders,
+  copyResponseHeaders,
+  isCaelondevOrigin,
+} from "./lib/proxy-headers.mjs";
 import { buildRobotsTxt } from "./lib/robots.mjs";
 import { getClientIP, banIPCloudflare } from "./lib/cloudflare.mjs";
 import {
@@ -9,11 +13,22 @@ import {
   buildWarningPage,
   buildBannedPage,
 } from "./lib/honeypot.mjs";
+import { handleApiRequest } from "./lib/api.mjs";
 
 export default async function handler(req, res) {
   const host = req.headers.host;
   const [pathname, query = ""] = req.url.split("?");
   const ip = getClientIP(req);
+
+  if (host === "api.caelondev.net") {
+    const origin = req.headers.origin;
+    if (isCaelondevOrigin(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Vary", "Origin");
+    }
+    await handleApiRequest(req, res, pathname);
+    return;
+  }
 
   if (isEntryPath(pathname)) {
     res.status(200);
