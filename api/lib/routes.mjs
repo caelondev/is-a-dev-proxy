@@ -3,7 +3,8 @@ const bySubdomain = new Map();
 register({
   name: "portfolio",
   subdomain: null,
-  upstream: "https://caelondev.codeberg.page/",
+  upstream: "https://pages.caelondev.workers.dev",
+  upstreamHost: "pages.caelondev.workers.dev",
   proxy: true,
   rewritePath: (pathname) =>
     pathname === "/" ? "/" : pathname.replace(/^\/caelondev/, ""),
@@ -19,34 +20,17 @@ register({
   rewritePath: (pathname) => (pathname === "/" ? "/caelondev" : pathname),
 });
 
-register(
-  codebergPage({
-    name: "blog",
-    subdomain: "blog",
-    repoPath: "blog",
-  }),
-);
+register({
+  name: "blog",
+  subdomain: "blog",
+  upstream: "https://blog.caelondev.workers.dev",
+  upstreamHost: "blog.caelondev.workers.dev",
+  proxy: true,
+  rewritePath: (pathname) => pathname,
+});
 
 function register(route) {
   bySubdomain.set(route.subdomain, route);
-}
-
-function codebergPage({ name, subdomain, repoPath = null }) {
-  const upstreamHost = "caelondev.codeberg.page";
-  const base = repoPath ? `/${repoPath}` : "";
-
-  return {
-    name,
-    subdomain,
-    upstream: `https://${upstreamHost}`,
-    upstreamHost,
-    proxy: true,
-    rewritePath: (pathname) => {
-      if (pathname === "/") return `${base}/`;
-      if (pathname.startsWith(base + "/")) return pathname;
-      return `${base}${pathname}`;
-    },
-  };
 }
 
 function extractSubdomain(host) {
