@@ -1,3 +1,5 @@
+import { getClientIP } from "./cloudflare.mjs";
+
 const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
 const LASTFM_USERNAME = "caelondev";
 const BLOG_BACKEND_URL = "https://blog-backend-7yck.onrender.com";
@@ -28,9 +30,9 @@ async function handleBlog(req, res, pathname) {
       method: req.method,
       headers: {
         "content-type": req.headers["content-type"] || "application/json",
-        "x-user-real-ip":
-          req.headers["x-real-ip"] || req.socket.remoteAddress || "",
+        "x-user-real-ip": getClientIP(req),
         "user-agent": req.headers["user-agent"] || "",
+        "x-trace-id": req.headers["x-trace-id"] || "",
         "x-turnstile-token": req.headers["x-turnstile-token"] || "",
       },
       body: ["GET", "HEAD"].includes(req.method)
@@ -59,7 +61,7 @@ async function handleApiRequest(req, res, pathname) {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Content-Type, x-turnstile-token",
+      "Content-Type, x-turnstile-token, x-trace-id",
     );
     res.status(204);
     res.end();

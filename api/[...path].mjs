@@ -12,6 +12,9 @@ import {
 import { handleApiRequest } from "./lib/api.mjs";
 
 export default async function handler(req, res) {
+  console.log("RAW cf-connecting-ip:", req.headers["cf-connecting-ip"]);
+  console.log("RAW x-user-real-ip:", req.headers["x-user-real-ip"]);
+
   const host = req.headers.host;
   const [pathname, query = ""] = req.url.split("?");
   const ip = getClientIP(req);
