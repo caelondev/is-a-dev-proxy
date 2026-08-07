@@ -2,7 +2,7 @@ import { getClientIP } from "./cloudflare.mjs";
 
 const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
 const LASTFM_USERNAME = "caelondev";
-const BLOG_BACKEND_URL = "https://blog-backend-7yck.onrender.com";
+const BLOG_BACKEND_URL = "https://blog-backend-theta-eight.vercel.app/";
 
 async function handleLastfm(res) {
   const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USERNAME}&api_key=${LASTFM_API_KEY}&format=json&limit=1`;
