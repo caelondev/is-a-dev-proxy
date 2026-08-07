@@ -58,7 +58,7 @@ async function handleBlog(req, res, pathname) {
 
 async function handleApiRequest(req, res, pathname) {
   if (req.method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
     res.setHeader(
       "Access-Control-Allow-Headers",
       "Content-Type, x-turnstile-token, x-trace-id",
