@@ -29,6 +29,15 @@ register({
   rewritePath: (pathname) => pathname,
 });
 
+register({
+  name: "notreadin",
+  subdomain: "notreadin",
+  upstream: "https://caelondev.codeberg.page",
+  upstreamHost: "caelondev.codeberg.page",
+  proxy: true,
+  rewritePath: (pathname) => `/notreadin${pathname}`,
+});
+
 function register(route) {
   bySubdomain.set(route.subdomain, route);
 }
