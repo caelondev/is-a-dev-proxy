@@ -43,7 +43,7 @@ export default async function handler(req, res) {
   const searchParams = new URLSearchParams(query);
   if (searchParams.has("__debug")) {
     const route = getRoute(host);
-    const rewritten = route ? route.rewritePath(pathname) : "N/A";
+    const rewritten = route ? route.rewritePath(pathname, req) : "N/A";
     const targetUrl = route
       ? route.upstream + rewritten + (query ? `?${query}` : "")
       : "N/A";
@@ -82,7 +82,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const rewritten = route.rewritePath(pathname);
+  const rewritten = route ? route.rewritePath(pathname, req) : "N/A";
   const query_ = query ? `?${query}` : "";
 
   if (!route.proxy) {

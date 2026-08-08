@@ -35,7 +35,15 @@ register({
   upstream: "https://caelondev.codeberg.page",
   upstreamHost: "caelondev.codeberg.page",
   proxy: true,
-  rewritePath: (pathname) => `/notreadin${pathname}`,
+  rewritePath: (pathname, req) => {
+  const ua = req.headers["user-agent"] ?? "";
+
+  if (ua.toLowerCase().includes("discordbot")) {
+    return "/notreadin/aintreadin.gif";
+  }
+
+  return `/notreadin${pathname}`;
+},
 });
 
 function register(route) {
