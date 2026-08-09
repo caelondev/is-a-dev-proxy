@@ -40,13 +40,13 @@ async function handleBlog(req, res, pathname) {
         : JSON.stringify(req.body),
     });
 
-    const data = await upstream.text();
+    const buf = Buffer.from(await upstream.arrayBuffer());
     res.status(upstream.status);
     res.setHeader(
       "content-type",
       upstream.headers.get("content-type") || "application/json",
     );
-    res.send(data);
+    res.send(buf);
   } catch (err) {
     res.status(502);
     res.setHeader("content-type", "application/json; charset=utf-8");
