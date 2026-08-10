@@ -17,7 +17,16 @@ register({
   upstreamHost: "codeberg.org",
   proxy: true,
   allowRobots: true,
-  rewritePath: (pathname) => (pathname === "/" ? "/caelondev" : pathname),
+  rewritePath: (pathname) => {
+    if (pathname == "/") return "/caelondev";
+    if (pathname == "/repos" || pathname == "/repos/") return "/caelondev?tab=repositories";
+    if (pathname.startsWith("/repos/")) {
+      let path = pathname.split("/").slice(2); // remove "" and repos
+      return `/caelondev/${path.join("/")}`;
+    }
+
+    return pathname
+  },
 });
 
 register({
@@ -36,14 +45,14 @@ register({
   upstreamHost: "caelondev.codeberg.page",
   proxy: true,
   rewritePath: (pathname, req) => {
-  const ua = req.headers["user-agent"] ?? "";
+    const ua = req.headers["user-agent"] ?? "";
 
-  if (ua.toLowerCase().includes("discordbot")) {
-    return "/notreadin/aintreadin_v2.gif";
-  }
+    if (ua.toLowerCase().includes("discordbot")) {
+      return "/notreadin/aintreadin_v2.gif";
+    }
 
-  return `/notreadin${pathname}`;
-},
+    return `/notreadin${pathname}`;
+  },
 });
 
 function register(route) {
