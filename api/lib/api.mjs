@@ -3,9 +3,32 @@ import { getClientIP } from "./cloudflare.mjs";
 const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
 const LASTFM_USERNAME = "caelondev";
 const BLOG_BACKEND_URL = "https://blog-backend-theta-eight.vercel.app/";
+const CODEBERG_COMMITS_URL =
+  "https://codeberg-commits.pages.dev/api/latest-commit";
+const DEFAULT_CODEBERG_USERNAME = "caelondev";
 
 async function handleLastfm(res) {
   const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USERNAME}&api_key=${LASTFM_API_KEY}&format=json&limit=1`;
+
+  try {
+    const upstream = await fetch(url);
+    const data = await upstream.json();
+    res.status(upstream.status);
+    res.setHeader("content-type", "application/json; charset=utf-8");
+    res.send(JSON.stringify(data));
+  } catch (err) {
+    res.status(502);
+    res.setHeader("content-type", "application/json; charset=utf-8");
+    res.send(
+      JSON.stringify({ error: `Upstream fetch failed: ${err.message}` }),
+    );
+  }
+}
+
+async function handleCodebergCommits(req, res) {
+  const reqUrl = new URL(req.url, "http://localhost");
+  const username = reqUrl.searchParams.get("user") || DEFAULT_CODEBERG_USERNAME;
+  const url = `${CODEBERG_COMMITS_URL}?user=${username}`;
 
   try {
     const upstream = await fetch(url);
@@ -70,6 +93,11 @@ async function handleApiRequest(req, res, pathname) {
 
   if (pathname === "/lastfm") {
     await handleLastfm(res);
+    return;
+  }
+
+  if (pathname === "/codeberg-commits") {
+    await handleCodebergCommits(req, res);
     return;
   }
 
